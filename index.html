@@ -1,166 +1,817 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weekly ROI Tracker</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  </head>
-  <body class="min-h-screen bg-[#040617] text-slate-100">
-    <main class="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-4 py-10 md:px-8">
-      <header class="flex flex-col gap-1 text-center md:text-left">
-        <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Weekly ROI Tracker</p>
-        <h1 class="text-3xl font-semibold text-white md:text-4xl">
-          Registra semanalmente Number of financial data request y ROI calculator.
-        </h1>
-      </header>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Imperia SCM Business Case - Example</title>
 
-      <section class="grid gap-6 rounded-3xl bg-slate-900/60 p-6 shadow-xl shadow-blue-600/20 ring-1 ring-white/10 backdrop-blur">
-        <div class="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)] lg:items-start">
-          <div class="grid gap-4">
-            <div class="grid gap-3 rounded-2xl border border-white/10 bg-slate-900/70 p-4">
-              <p class="text-sm font-medium uppercase tracking-widest text-indigo-300">
-                Selecciona una fecha dentro de la semana (Lunes a Domingo)
-              </p>
-              <div class="flex flex-wrap items-center gap-3">
-                <label class="flex flex-col text-xs uppercase tracking-wider text-slate-300">
-                  Selecciona semana (inicio)
-                  <input type="date" class="mt-1 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500/40" />
-                </label>
-                <label class="flex flex-col text-xs uppercase tracking-wider text-slate-300">
-                  Selecciona semana (fin)
-                  <input type="date" class="mt-1 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500/40" />
-                </label>
-                <button class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold tracking-wide text-white transition hover:bg-indigo-400">
-                  Añadir semana
-                </button>
-              </div>
-            </div>
+    <!-- Tipografía y estilos básicos -->
+    <style>
+        /* Tipografía similar a Segoe UI / Arial */
+        :root{
+            --bg-start: #0B0F17;
+            --bg-end: #07111E;
+            --card: #1C1F26; /* fondo de tarjetas / widgets */
+            --accent: #007BFF; /* color acento principal */
+            --accent-strong: #0094FF; /* request demo button */
+            --accent-hover: #33A8FF;
+            --accent-secondary: #4BB6C7; /* azul secundario */
+            --text-main: #FFFFFF;
+            --text-secondary: #B0B4BA;
+            --text-tertiary: #7A808A;
+            --radius:12px;
+            --shadow: 0 10px 30px rgba(35, 46, 82, 0.15);
+            --gap:18px;
+        }
+        html,body{height:100%;}
+        body{
+            margin:0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(120deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            color:var(--text-main);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:40px 16px;
+        }
 
-            <div class="grid gap-3 rounded-2xl border border-white/10 bg-slate-900/70 p-4">
-              <div class="flex flex-wrap items-center gap-3">
-                <label class="flex flex-col text-xs uppercase tracking-wider text-slate-300">
-                  Filtrar desde
-                  <input type="date" class="mt-1 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500/40" />
-                </label>
-                <label class="flex flex-col text-xs uppercase tracking-wider text-slate-300">
-                  Filtrar hasta
-                  <input type="date" class="mt-1 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500/40" />
-                </label>
-                <div class="ml-auto flex flex-wrap gap-2">
-                  <button class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold tracking-wide text-white transition hover:bg-indigo-400">
-                    Guardar semana
-                  </button>
-                  <button class="rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold tracking-wide text-slate-200 transition hover:border-rose-500/60 hover:text-rose-300">
-                    Eliminar semana
-                  </button>
+        /* Contenedor centrado */
+        .container{
+            width:100%;
+            max-width:920px;
+            display:grid;
+            grid-template-columns: 1fr;
+            gap:var(--gap);
+        }
+
+    /* Card (input form / results) */
+        .card{
+            background:var(--card);
+            border-radius:var(--radius);
+            box-shadow:var(--shadow);
+            padding:22px;
+        }
+
+        h1{
+            font-size:20px;
+            margin:0 0 12px 0;
+            color:var(--text-main);
+        }
+
+        /* Formulario */
+        form{
+            display:grid;
+            grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+            gap:14px;
+            align-items:end;
+        }
+        .field{
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+        }
+        label{
+            font-size:13px;
+            color:var(--text-secondary);
+        }
+        input[type="text"], select{
+            padding:10px 12px;
+            border-radius:8px;
+            border:1px solid rgba(255,255,255,0.04);
+            background: var(--card);
+            color:var(--text-main);
+            outline:none;
+            font-size:15px;
+        }
+        /* Show placeholder option in selects as muted color when not selected */
+        select:invalid { color: var(--text-tertiary); }
+        select option[disabled] { color: var(--text-tertiary); }
+        .hidden{display:none;}
+        input[type="text"]:focus, select:focus{
+            box-shadow:0 0 0 4px rgba(0,123,255,0.12);
+            border-color:var(--accent);
+        }
+
+        /* Botones */
+        .actions{
+            display:flex;
+            gap:10px;
+            justify-content:flex-end;
+            grid-column: 1 / -1;
+        }
+        button{
+            cursor:pointer;
+            border:0;
+            padding:10px 14px;
+            border-radius:10px;
+            font-weight:600;
+            color:var(--text-main);
+            background:var(--accent);
+            box-shadow:0 6px 18px rgba(0,0,0,0.4);
+        }
+        button.secondary{
+            background:#2B2F36; /* boton iniciar sesion */
+            box-shadow:none;
+        }
+        .btn-demo{
+            background:var(--accent-strong);
+        }
+        button[disabled]{
+            opacity:0.5;
+            cursor:not-allowed;
+        }
+
+    /* Results table */
+        .results{
+            margin-top:6px;
+            overflow:auto;
+        }
+        table{
+            width:100%;
+            border-collapse:collapse;
+            font-size:14px;
+            min-width:720px;
+        }
+        th, td{
+            text-align:left;
+            padding:12px 14px;
+            border-bottom:1px solid #eef1f6;
+            vertical-align:middle;
+        }
+        /* números centrados y estilo legible */
+        .numeric{ text-align:center; color:var(--text-main); }
+        /* fila destacada para métricas resumen */
+        .highlight-row td{ 
+            background: linear-gradient(90deg, rgba(0,148,255,0.06), rgba(75,182,199,0.02));
+            font-weight:700;
+            color:var(--text-main);
+        }
+        .highlight-row td:first-child{ color:var(--text-secondary); font-weight:600; }
+        .big-value{ font-size:1.08rem; color:var(--accent-strong); }
+        thead th{
+            background:linear-gradient(180deg, rgba(0,123,255,0.06), transparent);
+            color:var(--text-main);
+            font-weight:700;
+        }
+        tbody tr:hover{background:rgba(255,255,255,0.02);}
+        .muted{color:var(--text-tertiary);}
+        .right{text-align:right;}
+        .note{
+            margin-top:12px;
+            font-size:13px;
+            color:var(--muted);
+        }
+
+        /* Responsive improvements */
+        @media (max-width:720px){
+            form{grid-template-columns:1fr;}
+            .actions{justify-content:stretch; flex-direction:column;}
+            button{width:100%;}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Tarjeta de entrada: formulario -->
+        <div class="card" aria-labelledby="titulo-form">
+            <h1 id="titulo-form">Business Case Calculator - Input</h1>
+
+            <!-- Formulario con etiquetas e inputs -->
+            <form id="inputForm" onsubmit="return false;">
+                <!-- Cada campo con su label e input -->
+                <div class="field">
+                    <label for="sales">Sales (Million Currency)</label>
+                    <input id="sales" name="sales" type="text" inputmode="numeric" placeholder="e.g. 300">
                 </div>
-              </div>
-            </div>
-          </div>
 
-          <aside class="flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-4">
-            <div class="flex items-center justify-between">
-              <span class="text-sm uppercase tracking-[0.35em] text-indigo-300">Semana</span>
-              <span class="text-xs text-slate-400">13/10/2025 - 19/10/2025</span>
-            </div>
-            <div class="grid gap-3 rounded-2xl bg-slate-950/40 p-4">
-              <div class="flex items-center justify-between text-slate-300">
-                <span class="text-xs uppercase tracking-[0.35em] text-slate-400">Number of financial data request</span>
-                <span class="text-lg font-semibold text-white">18</span>
-              </div>
-              <label class="flex flex-col gap-2 text-xs uppercase tracking-wider text-slate-300">
-                ROI calculator
-                <input type="range" min="0" max="40" value="18" class="accent-indigo-500" />
-              </label>
-            </div>
-            <div class="grid gap-2 rounded-2xl bg-slate-950/40 p-4">
-              <div class="flex items-center justify-between text-slate-300">
-                <span class="text-xs uppercase tracking-[0.35em] text-slate-400">Número de requests</span>
-                <span class="text-lg font-semibold text-white">18</span>
-              </div>
-              <div class="flex items-center justify-between text-slate-300">
-                <span class="text-xs uppercase tracking-[0.35em] text-slate-400">ROI (hours)</span>
-                <span class="text-lg font-semibold text-white">8</span>
-              </div>
-            </div>
-          </aside>
+                <div class="field">
+                    <label for="service">Company Current Service Level (%)</label>
+                    <input id="service" name="service" type="text" placeholder="e.g. 95">
+                </div>
+
+                <!-- inventory input removed (replaced by Inventory Input Mode control más abajo) -->
+
+                <div class="field">
+                    <label for="industry">Industry</label>
+                    <!-- Option to choose between entering EBITDA or selecting industry -->
+                    <div>
+                        <label style="font-size:13px;margin-bottom:6px;">Do you want to enter EBITDA or use industry average?</label>
+                        <div style="display:flex;gap:10px;align-items:center;">
+                            <label><input type="radio" name="ebitdaMode" value="manual" id="ebitdaModeManual"> Enter EBITDA</label>
+                            <label><input type="radio" name="ebitdaMode" value="industry" id="ebitdaModeIndustry" checked> Use industry average</label>
+                        </div>
+                    </div>
+                    <input id="ebitdaInput" name="ebitdaInput" type="text" inputmode="numeric" placeholder="e.g. 10" class="hidden">
+                    <select id="industrySelect" name="industry" required>
+                        <option value="" disabled selected>Select industry (example Food & Beverage)</option>
+                        <option>Food &amp; Beverage</option>
+                        <option>Electronics</option>
+                        <option>Food Retailer</option>
+                        <option>Healthcare</option>
+                        <option>Chemicals</option>
+                        <option>Others</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="planning">How are you planning?</label>
+                    <select id="planning" name="planning" required>
+                        <option value="" disabled selected>Select planning method</option>
+                        <option>Excel/manual</option>
+                        <option>Planning Tool or ERP</option>
+                        <option>Internal Development</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="licenseCostInput">Imperia Licensing (annual) — enter value in thousands €</label>
+                    <input id="licenseCostInput" name="licenseCostInput" type="text" inputmode="numeric" placeholder="e.g. 30 (=> 30,000 €)" value="30" />
+                    <div style="font-size:12px;color:#B0B4BA;margin-top:6px;">Enter the license in thousands of euros; it will be converted to millions for calculations.</div>
+                </div>
+
+                <div class="field">
+                    <label>Inventory Input Mode</label>
+                    <div style="display:flex;gap:10px;align-items:center;">
+                        <label><input type="radio" name="inventoryMode" value="range" id="inventoryModeRange" checked> Range (e.g. 30-50)</label>
+                        <label><input type="radio" name="inventoryMode" value="known" id="inventoryModeKnown"> I know inventory</label>
+                    </div>
+                    <select id="inventoryRange" name="inventoryRange" required>
+                        <option value="" disabled selected>Select interval (example 30-50)</option>
+                        <option>&lt;5</option>
+                        <option>5-10</option>
+                        <option>10-20</option>
+                        <option>20-30</option>
+                        <option>30-50</option>
+                        <option>&gt;50</option>
+                    </select>
+                    <input id="inventoryKnown" name="inventoryKnown" type="text" inputmode="numeric" placeholder="e.g. 40" class="hidden">
+                </div>
+
+                <!-- Buttons -->
+                <div class="actions">
+                    <button id="calculateBtn" type="button" class="btn-demo" disabled>Calculate Results</button>
+                </div>
+            </form>
         </div>
 
-        <div class="grid gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-4">
-          <div class="flex flex-wrap items-center gap-3">
-            <label class="flex flex-col text-xs uppercase tracking-wider text-slate-300">
-              Exportar desde
-              <input type="date" class="mt-1 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500/40" />
-            </label>
-            <label class="flex flex-col text-xs uppercase tracking-wider text-slate-300">
-              Exportar hasta
-              <input type="date" class="mt-1 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500/40" />
-            </label>
-            <button class="ml-auto rounded-xl bg-sky-500 px-4 py-2 text-sm font-semibold tracking-wide text-white transition hover:bg-sky-400">
-              Exportar a Excel
-            </button>
-          </div>
-        </div>
+    <!-- Results card: initially hidden -->
+        <div id="resultsCard" class="card" style="display:none;">
+            <h1>Results</h1>
 
-        <div class="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-          <article class="flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-4">
-            <header class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-white">Resumen histórico</h2>
-              <span class="text-xs uppercase tracking-[0.35em] text-slate-400">13/10/2025 - 19/10/2025</span>
-            </header>
-            <div class="grid gap-3 md:grid-cols-2">
-              <div class="flex flex-col gap-2">
-                <h3 class="text-sm font-semibold text-indigo-300">Requests (units)</h3>
-                <div class="flex h-40 items-end gap-2 rounded-2xl bg-slate-950/50 p-3">
-                  <div class="flex-1 rounded-xl bg-gradient-to-t from-indigo-900 to-indigo-500" style="height: 70%"></div>
-                  <div class="flex-1 rounded-xl bg-gradient-to-t from-indigo-900 to-indigo-500" style="height: 45%"></div>
-                  <div class="flex-1 rounded-xl bg-gradient-to-t from-indigo-900 to-indigo-500" style="height: 90%"></div>
-                </div>
-              </div>
-              <div class="flex flex-col gap-2">
-                <h3 class="text-sm font-semibold text-cyan-300">ROI (hours)</h3>
-                <div class="flex h-40 items-end gap-2 rounded-2xl bg-slate-950/50 p-3">
-                  <div class="flex-1 rounded-xl bg-gradient-to-t from-cyan-900 to-cyan-400" style="height: 35%"></div>
-                  <div class="flex-1 rounded-xl bg-gradient-to-t from-cyan-900 to-cyan-400" style="height: 80%"></div>
-                  <div class="flex-1 rounded-xl bg-gradient-to-t from-cyan-900 to-cyan-400" style="height: 60%"></div>
-                </div>
-              </div>
+            <!-- Contenedor donde se inyecta la tabla -->
+            <div class="results" id="resultsContainer" aria-live="polite">
+                <!-- (Intermedia breakdown table removed; calculations are preserved) -->
+                <!-- Tabla generada por JavaScript -->
+                <table id="results-table" role="table" aria-label="Imperia Results">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>w/o Imperia</th>
+                            <th>Change</th>
+                            <th>w/ Imperia</th>
+                            <th>Cash Variation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body">
+                        <!-- Filas inyectadas por JS -->
+                    </tbody>
+                </table>
             </div>
-            <p class="rounded-2xl bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
-              Mide el número de solicitudes que recibimos en Number of financial data request. ROI calculator se completa con los datos del bot.
-            </p>
-          </article>
 
-          <aside class="flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-4">
-            <header class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-white">Base de datos</h2>
-              <div class="flex gap-2">
-                <button class="rounded-xl border border-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-200 transition hover:border-rose-500/60 hover:text-rose-300">
-                  Vaciar DB
-                </button>
-                <button class="rounded-xl border border-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-200 transition hover:border-emerald-500/60 hover:text-emerald-300">
-                  Resetear DB
-                </button>
-              </div>
-            </header>
-            <div class="grid gap-3 text-sm text-slate-300">
-              <button class="flex items-center justify-between rounded-2xl bg-slate-950/40 px-4 py-3 transition hover:bg-slate-950/70">
-                <span class="font-medium text-white">Descargar DB (JSON)</span>
-                <span class="text-xs uppercase tracking-[0.35em] text-slate-400">↓</span>
-              </button>
-              <button class="flex items-center justify-between rounded-2xl bg-slate-950/40 px-4 py-3 transition hover:bg-slate-950/70">
-                <span class="font-medium text-white">Restaurar DB</span>
-                <span class="text-xs uppercase tracking-[0.35em] text-slate-400">↑</span>
-              </button>
+            <div class="note">All Data in Million EUR</div>
+            <div style="margin-top:12px;display:flex;justify-content:flex-end;">
+                <button id="exportBtn" type="button" class="secondary" disabled>Export to Excel</button>
             </div>
-          </aside>
         </div>
-      </section>
+    </div>
 
-      <footer class="rounded-3xl border border-white/10 bg-slate-900/60 px-6 py-4 text-center text-xs text-slate-400">
-        Selecciona días del lunes al domingo. Los filtros permiten revisar rápidamente las semanas almacenadas y exportar la información a Excel.
-      </footer>
-    </main>
-  </body>
+    <!-- SheetJS library for Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <script>
+    // =========================
+    // JavaScript logic
+    // Comments explain each part
+    // =========================
+
+        // Referencias a elementos importantes
+        const calculateBtn = document.getElementById('calculateBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const resultsCard = document.getElementById('resultsCard');
+        const resultsBody = document.getElementById('results-body');
+    const salesInput = document.getElementById('sales');
+    const serviceInput = document.getElementById('service');
+    const planningInput = document.getElementById('planning');
+    // ...existing code...
+    const ebitdaModeManual = document.getElementById('ebitdaModeManual');
+    const ebitdaModeIndustry = document.getElementById('ebitdaModeIndustry');
+    const ebitdaInput = document.getElementById('ebitdaInput');
+    const industrySelect = document.getElementById('industrySelect');
+    const inventoryModeRange = document.getElementById('inventoryModeRange');
+    const inventoryModeKnown = document.getElementById('inventoryModeKnown');
+    const inventoryRange = document.getElementById('inventoryRange');
+    const inventoryKnown = document.getElementById('inventoryKnown');
+
+        // Default static values to show in the table.
+    // We keep the sample values here but bind Sales to reflect the input.
+        const STATIC_ROWS = [
+            // [label, w/o, change, w/, cashVariation]
+            ["Sales", null, "", null, "0.45"],
+            ["Service Level", null, "4%", "99%", ""],
+            ["EBITDA%", "10%", "1.0%", "11%", "2.30"],
+            ["Inventory", "40.00", "(5%)", "38.00", "2.00"],
+            ["Financial Expenses", "1.80", "(5%)", "1.71", "0.07"],
+            ["Imperia Licensing", "-", "", "0.03", "0.02"],
+            ["Cash Variation", "", "", "", "4.79"],
+            ["EBITDA Gross Improvement", "", "", "", "3.63"]
+        ];
+
+    // Industry average EBITDA map (example percentage values)
+        const INDUSTRY_EBITDA = {
+            'Food & Beverage': 15,
+            'Electronics': 25,
+            'Food Retailer': 5,
+            'Healthcare': 20,
+            'Chemicals': 12,
+            'Others': 10
+        };
+
+        // Formatea número con 2 decimales (si es número)
+        function formatNumber(v){
+            const n = Number(String(v).replace(/[^0-9.\-]/g,''));
+            if (!isFinite(n)) return v;
+            return n.toFixed(2);
+        }
+
+        function parsePercentageInput(v){
+            if (v === null || v === undefined) return NaN;
+            const n = Number(String(v).replace(/[^0-9.\-]/g,''));
+            return isFinite(n) ? n : NaN;
+        }
+
+        // Normaliza coma decimal a punto y elimina caracteres no numéricos
+        function normalizeNumericString(s){
+            if (s === null || s === undefined) return '';
+            // permitir signo negativo, dígitos y separador decimal (coma o punto)
+            s = String(s).trim();
+            // reemplazar coma por punto
+            s = s.replace(/,/g, '.');
+            // eliminar caracteres inválidos (mantener dígitos, punto y signo -)
+            s = s.replace(/[^0-9.\-]/g, '');
+            // if more than one decimal point, keep only the first
+            const parts = s.split('.');
+            if (parts.length > 2) s = parts.shift() + '.' + parts.join('');
+            return s;
+        }
+
+        // -----------------------
+        // Constantes y supuestos
+        // -----------------------
+        // Mejora de margen EBITDA según método de planificación actual (puntos porcentuales)
+        const PLANNING_IMPROVEMENTS = {
+            'Excel/manual': 2,
+            'Planning Tool or ERP': 0.5,
+            'Internal Development': 1
+        };
+
+        // Supuestos generales
+        const SERVICE_LEVEL_IMPROVEMENT = 5;      // puntos porcentuales
+        const SERVICE_TO_SALES_CONV = 0.5;        // cada punto de SL -> 0.5% ventas
+        const INVENTORY_REDUCTION = 0.05;         // reducción del 5%
+    // Default: license in thousands of € (30 = 30,000€). It will be converted to millions at runtime
+    const DEFAULT_LICENSE_K = 30;             // 30 -> 30.000 € -> 0.03 M€
+        const WACC = 0.06;                        // 6% coste de capital
+    const TAX_RATE = 0.25;                    // 25% tax rate
+
+    // Format percentage with 1 decimal and remove .0 (e.g. 1.0% -> 1%)
+        function formatPercent(val){
+            if (!isFinite(Number(val))) return '';
+            const str = Number(val).toFixed(1);
+            return str.replace(/\.0$/, '') + '%';
+        }
+
+        // Asignar listeners para inputs que deben ser numéricos
+        const licenseCostInput = document.getElementById('licenseCostInput');
+        [salesInput, serviceInput, ebitdaInput, inventoryKnown, licenseCostInput].forEach(el => {
+            if (!el) return;
+            el.addEventListener('input', function(e){
+                const before = el.value;
+                const after = normalizeNumericString(before);
+                if (before !== after) el.value = after;
+            });
+        });
+
+        // Añadir % automáticamente en blur para service y ebitda, y capear en 100
+        function applyPercentBehavior(el){
+            if (!el) return;
+            el.addEventListener('blur', function(){
+                let v = normalizeNumericString(el.value);
+                if (v === '') return;
+                let n = Number(v);
+                if (!isFinite(n)) return;
+                if (n > 100) n = 100;
+                if (n < 0) n = 0;
+                el.value = n; // mostramos número; la tabla añade el %
+            });
+        }
+        applyPercentBehavior(serviceInput);
+        applyPercentBehavior(ebitdaInput);
+
+    // Front-end validation: enable Calculate button only if form is complete
+        function isFormValid(){
+            // sales required
+            const salesV = normalizeNumericString(salesInput.value);
+            if (salesV === '') return false;
+
+            // service required
+            const serviceV = normalizeNumericString(serviceInput.value);
+            if (serviceV === '') return false;
+
+            // EBITDA: si modo manual, debe tener valor; si modo industria, industriaSelect debe tener value
+            if (ebitdaModeManual && ebitdaModeManual.checked){
+                const eV = normalizeNumericString(ebitdaInput.value);
+                if (eV === '') return false;
+            } else {
+                const ind = industrySelect.value;
+                if (!ind || ind === '') return false;
+            }
+
+            // Inventory: if known mode, value must exist; if range, selection must be made
+            if (inventoryModeKnown && inventoryModeKnown.checked){
+                const invK = normalizeNumericString(inventoryKnown.value);
+                if (invK === '') return false;
+            } else {
+                const invR = inventoryRange.value;
+                if (!invR || invR === '') return false;
+            }
+
+            // planning must be selected
+            const planningV = planningInput.value;
+            if (!planningV || planningV === '') return false;
+
+            return true;
+        }
+
+        function refreshCalculateButton(){
+            const btn = document.getElementById('calculateBtn');
+            if (!btn) return;
+            btn.disabled = !isFormValid();
+        }
+
+    // Listeners for changes that affect form validity
+    function safeAddInput(el){ if (!el) return; el.addEventListener('input', refreshCalculateButton); }
+    function safeAddChange(el){ if (!el) return; el.addEventListener('change', refreshCalculateButton); }
+
+    // inputs
+    [salesInput, serviceInput, ebitdaInput, inventoryKnown, document.getElementById('licenseCostInput')].forEach(safeAddInput);
+    // selects and range selects
+    [industrySelect, inventoryRange, planningInput].forEach(safeAddChange);
+    // radios (mode switches)
+    [ebitdaModeManual, ebitdaModeIndustry].forEach(r => { if (!r) return r.addEventListener('change', function(){ refreshEbitdaVisibility(); refreshCalculateButton(); }); });
+    [inventoryModeKnown, inventoryModeRange].forEach(r => { if (!r) return r.addEventListener('change', function(){ refreshInventoryVisibility(); refreshCalculateButton(); }); });
+
+    // Initial refresh (Calculate button disabled until form is valid)
+    refreshCalculateButton();
+
+        // Función que construye la tabla en el DOM aplicando la lógica ROI completa
+        function buildTable(){
+            // Limpiar cuerpo de resultados
+            resultsBody.innerHTML = '';
+
+            // 1) Lectura y normalización de inputs
+                const rawSales = (salesInput.value || '').trim() || '0';
+            const salesNum = Number(normalizeNumericString(rawSales));
+            const baselineSales = isFinite(salesNum) ? salesNum : 0;
+
+            // Read license entered by the user (in thousands of euros) and convert to millions
+            const licenseInputEl = document.getElementById('licenseCostInput');
+            let licenseK = DEFAULT_LICENSE_K; // default thousands €
+            if (licenseInputEl){
+                const lk = Number(normalizeNumericString(licenseInputEl.value || ''));
+                if (isFinite(lk) && lk >= 0) licenseK = lk;
+            }
+            const licenseM = Number((licenseK / 1000)); // convertir miles € a millones €
+
+            const rawService = (serviceInput.value || '').trim() || '0';
+            const serviceNum = Number(normalizeNumericString(rawService));
+            const baselineService = isFinite(serviceNum) ? serviceNum : 0;
+
+            // EBITDA baseline: modo manual o por industria
+            let baselineMargin = 0;
+            if (ebitdaModeManual && ebitdaModeManual.checked){
+                baselineMargin = parsePercentageInput(ebitdaInput.value) || 0;
+            } else {
+                const industryKey = (industrySelect.value && industrySelect.value !== '') ? industrySelect.value : 'Others';
+                baselineMargin = (INDUSTRY_EBITDA[industryKey] !== undefined) ? INDUSTRY_EBITDA[industryKey] : INDUSTRY_EBITDA['Others'];
+            }
+            if (!isFinite(baselineMargin) || baselineMargin < 0) baselineMargin = 0;
+
+            // Baseline inventory: known value or range
+            let baselineInventory = 0;
+            if (inventoryModeKnown && inventoryModeKnown.checked){
+                const invNum = Number(normalizeNumericString(inventoryKnown.value || '0'));
+                baselineInventory = isFinite(invNum) ? invNum : 0;
+            } else {
+                const rawRange = (inventoryRange && inventoryRange.value) ? inventoryRange.value.trim() : '';
+                baselineInventory = 0;
+                if (rawRange.startsWith('<')){
+                    baselineInventory = 2.5;
+                } else if (rawRange.startsWith('>')){
+                    baselineInventory = 60;
+                } else if (rawRange !== ''){
+                    const parts = rawRange.split(/[-–—]/).map(p => Number(normalizeNumericString(p)));
+                    if (parts.length === 2 && isFinite(parts[0]) && isFinite(parts[1])){
+                        baselineInventory = (parts[0] + parts[1]) / 2;
+                    }
+                }
+                if (!isFinite(baselineInventory)) baselineInventory = 0;
+            }
+
+            const planningMethod = (planningInput.value || '').trim();
+
+            // 2) Cálculos escenario con Imperia
+            let newService = 0;
+            if (baselineService > 95) {
+                newService = 99;
+            } else {
+                newService = baselineService + SERVICE_LEVEL_IMPROVEMENT;
+                if (newService > 99) newService = 99;
+            }
+            const serviceLevelIncrease = newService - baselineService;
+
+            const serviceLevelDeltaFraction = ((newService - baselineService) / 100) || 0;
+            const newSales = baselineSales * (1 + serviceLevelDeltaFraction * SERVICE_TO_SALES_CONV);
+
+            const marginIncrease = (PLANNING_IMPROVEMENTS[planningMethod] !== undefined) ? PLANNING_IMPROVEMENTS[planningMethod] : 0;
+            const newMargin = baselineMargin + marginIncrease;
+
+            const baselineEBITDA = baselineSales * (baselineMargin / 100);
+            const newEBITDA_beforeLicense = newSales * (newMargin / 100);
+            const licenseCostImpact = licenseM;
+            const newEBITDA_afterLicense = newEBITDA_beforeLicense - licenseCostImpact;
+            const ebitdaGain = newEBITDA_afterLicense - baselineEBITDA;
+
+            const newInventory = Math.max(0, baselineInventory * (1 - INVENTORY_REDUCTION));
+            const inventoryReductionAmount = baselineInventory - newInventory;
+
+            // Financial expenses: stock * WACC * (1 - TAX_RATE) según tu fórmula
+            // Financial expenses (for display) are shown net of tax, but for cash impact calculation
+            // we compute pre-tax difference and then apply (1 - TAX_RATE) as requested.
+            const baselineFinExp = baselineInventory * WACC * (1 - TAX_RATE);
+            const newFinExp = newInventory * WACC * (1 - TAX_RATE);
+            const financialExpensesSaved = baselineFinExp - newFinExp;
+
+            // 3) Variaciones de caja (post-tax donde aplica)
+            const salesEBITDA_gain = (newSales - baselineSales) * (baselineMargin / 100);
+            const salesCashVariation = salesEBITDA_gain * (1 - TAX_RATE);
+
+            const marginEBITDA_gain = newSales * (marginIncrease / 100);
+            const marginCashVariation = marginEBITDA_gain * (1 - TAX_RATE);
+
+            // Inventory cash: stock delta
+            const stockDelta = inventoryReductionAmount;
+
+            // Financial expense cash effect: difference between displayed financial expenses multiplied by (1 - TAX_RATE)
+            const finExCash_inv = (baselineFinExp - newFinExp) * (1 - TAX_RATE);
+
+            const inventoryCashVariation = stockDelta;
+
+            // interest cash variation (used in main table) is the finExCash_inv computed above
+            const interestCashVariation = finExCash_inv;
+
+            // License cost in millions (affects cash directly)
+            // Net cash impact of the license (tax-deductible)
+            const licenseCashVariation = licenseM * (1 - TAX_RATE);
+
+            const totalCashVariation = salesCashVariation + marginCashVariation + inventoryCashVariation + interestCashVariation - licenseCashVariation;
+
+            // 4) Construcción de filas y render en DOM
+            const rows = [];
+
+            // Sales
+            const salesChangePct = (baselineSales !== 0) ? (((newSales / baselineSales) - 1) * 100) : 0;
+            const salesChangeStr = (salesChangePct > 0 ? '+' : '') + (isFinite(salesChangePct) ? Number(salesChangePct).toFixed(1) + '%' : '');
+            rows.push(["Sales", formatNumber(baselineSales), salesChangeStr, formatNumber(newSales), formatNumber(salesCashVariation)]);
+
+            // Service Level
+            const serviceChangeStr = serviceLevelIncrease !== 0 ? (serviceLevelIncrease > 0 ? `${serviceLevelIncrease}%` : `(${Math.abs(serviceLevelIncrease)}%)`) : '0%';
+            rows.push(["Service Level", formatPercent(baselineService), serviceChangeStr, formatPercent(newService), ""]);
+
+            // EBITDA%
+            const ebitdaChangeStr = (marginIncrease !== 0) ? ((marginIncrease > 0 ? '+' : '') + Number(marginIncrease).toFixed(1) + '%') : '0%';
+            rows.push(["EBITDA%", formatPercent(baselineMargin), ebitdaChangeStr, formatPercent(newMargin), formatNumber(marginCashVariation)]);
+
+            // Inventory
+            const invChangePct = (baselineInventory !== 0) ? (((newInventory / baselineInventory) - 1) * 100) : 0;
+            const invChangeStr = isFinite(invChangePct) ? (invChangePct < 0 ? `(${Math.abs(invChangePct).toFixed(1)}%)` : `${invChangePct.toFixed(1)}%`) : '';
+            rows.push(["Inventory", formatNumber(baselineInventory), invChangeStr, formatNumber(newInventory), formatNumber(inventoryCashVariation)]);
+
+            // Financial Expenses
+            const finChangePct = (baselineFinExp !== 0) ? (((newFinExp / baselineFinExp) - 1) * 100) : 0;
+            const finChangeStr = isFinite(finChangePct) ? (finChangePct < 0 ? `(${Math.abs(finChangePct).toFixed(1)}%)` : `${finChangePct.toFixed(1)}%`) : '';
+            rows.push(["Financial Expenses", formatNumber(baselineFinExp), finChangeStr, formatNumber(newFinExp), formatNumber(interestCashVariation)]);
+
+            // Imperia Licensing
+            rows.push(["Imperia Licensing", '-', '', formatNumber(licenseM), formatNumber(licenseCashVariation)]);
+
+            // Total Cash Variation
+            rows.push(["Total Cash", '', '', '', formatNumber(totalCashVariation)]);
+
+            // EBITDA Gain (mejora bruta)
+            rows.push(["EBITDA Gain", '', '', '', formatNumber(ebitdaGain)]);
+
+            // Render rows
+            rows.forEach(r => {
+                const tr = document.createElement('tr');
+                // Label
+                tr.appendChild((function(){ const td = document.createElement('td'); td.textContent = r[0]; return td; })());
+
+                // w/o
+                const tdWo = document.createElement('td'); tdWo.textContent = r[1] != null ? r[1] : ''; if (r[1] && !isNaN(Number(String(r[1]).replace(/[^0-9.\-]/g,'')))) tdWo.classList.add('numeric'); tr.appendChild(tdWo);
+
+                // Change
+                const tdChange = document.createElement('td'); tdChange.textContent = r[2] != null ? r[2] : ''; tdChange.className = 'muted'; tr.appendChild(tdChange);
+
+                // w/
+                const tdWith = document.createElement('td'); tdWith.textContent = r[3] != null ? r[3] : ''; if (r[3] && !isNaN(Number(String(r[3]).replace(/[^0-9.\-]/g,'')))) tdWith.classList.add('numeric'); tr.appendChild(tdWith);
+
+                // Cash
+                const tdCash = document.createElement('td'); tdCash.textContent = r[4] != null ? r[4] : ''; tdCash.classList.add('numeric'); tr.appendChild(tdCash);
+
+                // Resaltar totales
+                if (r[0] === 'Total Cash' || r[0] === 'EBITDA Gain'){
+                    tr.classList.add('highlight-row');
+                    tdCash.classList.add('big-value');
+                }
+
+                resultsBody.appendChild(tr);
+            });
+
+            // Show results card and enable export
+            if (resultsCard) resultsCard.style.display = 'block';
+            if (exportBtn) exportBtn.disabled = false;
+            // -------------------------
+            // Populate detailed breakdown table
+            // -------------------------
+            const breakdownBody = document.getElementById('breakdown-body');
+            if (breakdownBody){
+                breakdownBody.innerHTML = '';
+
+                // Scenarios sequentially:
+                // Baseline
+                const base_sales = baselineSales;
+                const base_service = baselineService;
+                const base_margin = baselineMargin;
+                const base_ebitda = baselineEBITDA;
+                const base_inventory = baselineInventory;
+                const base_finexp = baselineFinExp;
+
+                // 1) Impact Service Level (apply SL improvement only)
+                const sales_sl = base_sales * (1 + serviceLevelDeltaFraction * SERVICE_TO_SALES_CONV);
+                const service_sl = newService;
+                const ebitda_sl = sales_sl * (base_margin / 100);
+                const inventory_sl = base_inventory;
+                const finexp_sl = base_finexp; // inventory unchanged -> finexp same as baseline (already net of tax)
+
+                // 2) Impact Efficiency (apply margin increase on top of SL scenario)
+                const margin_eff = base_margin + marginIncrease;
+                const sales_eff = sales_sl; // sales from SL scenario
+                const ebitda_eff = sales_eff * (margin_eff / 100);
+                const inventory_eff = inventory_sl;
+                const finexp_eff = finexp_sl;
+
+                // 3) Impact Inventory: apply inventory reduction to efficiency scenario
+                const inventory_inv = Math.max(0, base_inventory * (1 - INVENTORY_REDUCTION));
+                const sales_inv = sales_eff;
+                const ebitda_inv = ebitda_eff;
+                const finexp_inv = inventory_inv * WACC * (1 - TAX_RATE);
+
+                // 4) Full Impact: combine eff + inventory reduction and subtract license
+                const sales_full = sales_inv;
+                const margin_full = margin_eff;
+                const ebitda_full_beforeLic = sales_full * (margin_full / 100);
+                const ebitda_full_afterLic = ebitda_full_beforeLic - licenseM;
+                const inventory_full = inventory_inv;
+                const finexp_full = finexp_inv;
+
+                // Cash variations per scenario (post-tax where appropriate)
+                const salesCash_sl = (ebitda_sl - base_ebitda) * (1 - TAX_RATE); // approximate incremental EBITDA from sales only
+                const salesCash_eff = (ebitda_eff - ebitda_sl) * (1 - TAX_RATE);
+                const inventoryCash_inv = (base_inventory - inventory_inv); // cash liberated (stock delta)
+                const finExCash_inv = (base_finexp - finexp_inv) * (1 - TAX_RATE);
+                const licenseCash_full = licenseM * (1 - TAX_RATE);
+
+                // EBITDA Variation rows (in millions)
+                const ebitda_var_sl = ebitda_sl - base_ebitda;
+                const ebitda_var_eff = ebitda_eff - ebitda_sl;
+                const ebitda_var_inv = ebitda_inv - ebitda_eff; // likely 0
+                const ebitda_var_full = ebitda_full_afterLic - base_ebitda;
+
+                // Cash Variation rows
+                const cash_var_sl = salesCash_sl;
+                const cash_var_eff = salesCash_eff;
+                const cash_var_inv = inventoryCash_inv + finExCash_inv;
+                const cash_var_full = cash_var_sl + cash_var_eff + cash_var_inv - licenseCash_full;
+
+                // Helper to create a row
+                function appendBreakRow(label, baseVal, slVal, effVal, invVal, fullVal, fmtClass){
+                    const tr = document.createElement('tr');
+                    tr.appendChild((function(){const td=document.createElement('td'); td.textContent = label; return td;})());
+                    [baseVal, slVal, effVal, invVal, fullVal].forEach(v=>{ const td=document.createElement('td'); td.textContent = (v === '' || v === null || v === undefined) ? '' : String(v); if(fmtClass) td.className = fmtClass; tr.appendChild(td);});
+                    breakdownBody.appendChild(tr);
+                }
+
+                appendBreakRow('Sales (Millions EUR)', formatNumber(base_sales), formatNumber(sales_sl), formatNumber(sales_eff), formatNumber(sales_inv), formatNumber(sales_full), 'numeric');
+                appendBreakRow('Service level', formatPercent(base_service), formatPercent(service_sl), formatPercent(service_sl), formatPercent(service_sl), formatPercent(service_sl));
+                appendBreakRow('EBITDA Margin%', formatPercent(base_margin), formatPercent(base_margin), formatPercent(margin_eff), formatPercent(margin_eff), formatPercent(margin_full));
+                appendBreakRow('EBITDA (Millions EUR)', formatNumber(base_ebitda), formatNumber(ebitda_sl), formatNumber(ebitda_eff), formatNumber(ebitda_inv), formatNumber(ebitda_full_beforeLic));
+                appendBreakRow('Inventory', formatNumber(base_inventory), formatNumber(inventory_sl), formatNumber(inventory_eff), formatNumber(inventory_inv), formatNumber(inventory_full));
+                appendBreakRow('Financial Expenses', formatNumber(base_finexp), formatNumber(finexp_sl), formatNumber(finexp_eff), formatNumber(finexp_inv), formatNumber(finexp_full));
+                appendBreakRow('Imperia Licensing', '-', '', '', '', formatNumber(licenseM));
+
+                appendBreakRow('EBITDA Variation (Million EUR)', '', formatNumber(ebitda_var_sl), formatNumber(ebitda_var_eff), formatNumber(ebitda_var_inv), formatNumber(ebitda_var_full));
+                appendBreakRow('Cash Variation (Million EUR)', '', formatNumber(cash_var_sl), formatNumber(cash_var_eff), formatNumber(cash_var_inv), formatNumber(cash_var_full));
+
+                // Aux rows
+                const auxTr = document.createElement('tr');
+                auxTr.appendChild((function(){const td=document.createElement('td'); td.textContent='Aux'; return td;})());
+                auxTr.appendChild((function(){const td=document.createElement('td'); td.textContent=''; return td;})());
+                breakdownBody.appendChild(auxTr);
+                appendBreakRow('Inventory Cash', formatNumber(inventoryCash_inv || 0), '', '', '', '');
+                appendBreakRow('FinEx Cash', formatNumber(finExCash_inv || 0), '', '', '', '');
+            }
+        }
+
+    // Click event to calculate results (renders the table)
+        calculateBtn.addEventListener('click', function(){
+            // Podríamos validar aquí, pero mantenemos comportamiento simple
+            buildTable();
+            // Scroll to results on small screens
+            resultsCard.scrollIntoView({behavior:'smooth', block:'start'});
+        });
+
+    // Show/hide inputs depending on EBITDA mode
+        function refreshEbitdaVisibility(){
+            if (ebitdaModeManual && ebitdaModeManual.checked){
+                ebitdaInput.classList.remove('hidden');
+                industrySelect.classList.add('hidden');
+            } else {
+                ebitdaInput.classList.add('hidden');
+                industrySelect.classList.remove('hidden');
+            }
+        }
+        ebitdaModeManual.addEventListener('change', refreshEbitdaVisibility);
+        ebitdaModeIndustry.addEventListener('change', refreshEbitdaVisibility);
+        refreshEbitdaVisibility();
+
+    // Show/hide inputs depending on Inventory mode
+        function refreshInventoryVisibility(){
+            if (inventoryModeKnown && inventoryModeKnown.checked){
+                inventoryKnown.classList.remove('hidden');
+                inventoryRange.classList.add('hidden');
+            } else {
+                inventoryKnown.classList.add('hidden');
+                inventoryRange.classList.remove('hidden');
+            }
+        }
+        inventoryModeRange.addEventListener('change', refreshInventoryVisibility);
+        inventoryModeKnown.addEventListener('change', refreshInventoryVisibility);
+        refreshInventoryVisibility();
+
+    // Function to export the HTML table to .xlsx using SheetJS
+        function exportTableToExcel(){
+            const table = document.getElementById('results-table');
+
+            // Usamos SheetJS para convertir la tabla a workbook
+            const wb = XLSX.utils.table_to_book(table, {sheet: "Results"});
+            // Nombre de archivo con fecha
+            const filename = 'imperia_scm_results.xlsx';
+            XLSX.writeFile(wb, filename);
+        }
+
+    // Export button event: attach if the button exists (it's in the results card)
+        const expBtn = document.getElementById('exportBtn');
+        if (expBtn){
+            expBtn.addEventListener('click', function(){
+                try {
+                    exportTableToExcel();
+                } catch (e) {
+                    alert('Error exportando a Excel: ' + (e && e.message ? e.message : e));
+                }
+            });
+        }
+
+    // If user presses Enter in the form, trigger calculation
+        document.getElementById('inputForm').addEventListener('keydown', function(e){
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                calculateBtn.click();
+            }
+        });
+
+        // Initialize view with the results card hidden (optionally create table with default values)
+    // You can uncomment the following line to show results on load:
+        // buildTable();
+    </script>
+</body>
 </html>
