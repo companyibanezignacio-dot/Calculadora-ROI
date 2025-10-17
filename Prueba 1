@@ -38,6 +38,15 @@
             gap:var(--gap);
         }
 
+        .main-message{
+            text-align:center;
+            font-size:26px;
+            font-weight:700;
+            text-transform:uppercase;
+            color:var(--accent);
+            letter-spacing:1px;
+        }
+
         /* Tarjeta (formulario / resultados) */
         .card{
             background:var(--card);
@@ -147,6 +156,7 @@
 </head>
 <body>
     <div class="container">
+        <div class="main-message">tonto el que lo lee</div>
         <!-- Tarjeta de entrada: formulario -->
         <div class="card" aria-labelledby="titulo-form">
             <h1 id="titulo-form">Simulador Imperia SCM - Entrada</h1>
